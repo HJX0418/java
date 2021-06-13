@@ -1,0 +1,885 @@
+面向对象程序设计（二）
+关键字
+1.super关键字用于访问父类内容
+（1）子类成员方法中访问父类成员变量，用super.成员变量名
+（2）子类成员方法中访问父类成员方法，用super.成员方法名( );
+（3）子类构造方法中访问父类构造方法，用super();
+
+2.this关键字用于访问本类内容
+（1）在本类的成员方法中，访问本类的成员变量，this.成员变量名
+（2）在本类的成员方法中，访问本类的另一个成员方法,this.成员方法名( );
+（3）在本类的构造方法中，访问本类的另一个构造方法。this.构造方法( );
+
+
+3.static关键字
+作用：是一个修饰符，用于修饰成员(成员变量,成员方法)
+（1）被static 修饰后的成员变量，不再属于对象自己，它只有一份,属于类，存放在数据区（方法区），多个对象共享同一份数据。
+（2）当成员被static修饰之后，多了一种访问方式,  除了可以被对象调用之外，还可以被类直接调用（类名.静态成员）
+        如果没有static关键字，必须要先创建对象，才能调用方法。
+无论是成员变量还是成员方法，有了static关键字，都推荐使用类名称来访问。类名.静态变量      类名.静态方法()
+访问静态方法，在同一个类中，类名可以省略。
+
+public class Student {
+	
+	private int id;//学号
+	private String name;
+	private int age;
+	static String classroom;
+	static int idcounter=0;//学号计数器
+	
+	public Student() {this.id=++idcounter;}
+	public Student(String name,int age) {
+		this.name=name;
+		this.age=age;
+		this.id=++idcounter;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+}
+
+public class Test {
+
+	public static void main(String[] args) {
+		Student two=new Student("小元",19);
+		two.classroom="101教室";
+		System.out.println("姓名:"+two.getName()+",年龄:"+two.getAge()
+		+",教室:"+two.classroom+",学号:"+two.getId());
+		
+		Student one=new Student("小方",18);
+		
+		System.out.println("姓名:"+one.getName()+",年龄:"+one.getAge()
+		+",教室:"+one.classroom+",学号:"+one.getId());
+	}
+}
+
+——————————————————————————————————————————————
+public class Myclass {
+	int num;
+	static int numStatic;
+	public void methodA() {
+		System.out.println(num);
+		System.out.println(numStatic);
+		System.out.println("这是一个成员方法");
+	}
+	public static void methodStatic() {
+		System.out.println(num);//报错，静态方法不能访问普通成员变量
+		System.out.println(numStatic);
+		System.out.println("这是一个静态方法");
+	}
+}
+public class Test2 {
+
+	public static void main(String[] args) {
+		Myclass myobject=new Myclass();
+		myobject.methodA();
+		myobject.methodStatic();//不推荐
+		Myclass.methodStatic();//推荐
+		methodB();
+	}
+	public static void methodB() {
+		System.out.println("同一个类中的静态方法");
+	}
+
+}
+static的特点：
+1）随着类的加载而被加载
+2）优先于对象的存在
+3）被所有的对象所共享
+4）可以直接用类名调用
+
+存放位置
+类的静态变量、静态方法随着类的加载而存在于数据区
+对象普通的成员变量、成员方法随着对象的建立而存在于堆区。
+
+生命周期：
+1）类变量（static修饰的属性，存于data区）生命周期最长，随着类的消失而消失
+2）实例变量（没有static修饰的属性，存于heap区）生命比类变量短，它是随着对象的消失而消失
+
+static修饰方法注意事项：
+1）静态的方法只能访问静态的成员
+2）非静态的方法既能访问静态的成员（成员变量，成员方法），也能访问非静态成员（后出现的可以访问先出现的，反过来不行）。
+3）局部变量不能用static修饰
+4）静态的方法中是不可以定义this、 super关键字
+因为静态优先于对象存在，所以静态方法不可以出现  和对象有关的关键字。
+
+public class Test{
+	public static void main(String[] args){
+		Student.print();
+	}
+}
+class Student{
+	String name="张三";
+	int age;//实例变量
+	static String country="中国";//静态变量（类变量）
+	static void print(){
+		//System.out.println(name);  //报错
+		System.out.println(country);  
+	}
+	void p(){
+		System.out.println(name);
+		System.out.println(country);
+	}
+}
+
+
+什么时候使用静态？
+(1)当属于同一个类的所有对象出现共享数据时，需要将存储这个共享数据的成员变量用static修饰。
+
+(2)当功能内部没有访问到非静态的成员时（对象特有的数据），那么该功能可以定义成静态方法。
+
+public class Test{
+	public static void main(String[] args){
+		/*Person A=new Person();
+		A.name="小明";
+		Person B=new Person();
+		B.name="大伟"; 
+		A.print();
+		B.print();*/
+		Person.print();
+	}
+}
+class Person{
+	String name;
+	static String country;
+	static void print(){
+		//System.out.println(name+"您好");//报错
+		System.out.println("您好");
+	}
+}
+
+静态代码块
+public class 类名{
+	static {  
+		//静态代码块内容
+	}
+}
+特点：当第一次用到本类时，静态代码块执行唯一的一次。
+静态内容总是优先于非静态，所以静态代码块比构造方法先执行。
+静态代码块的用途：用来一次性对静态成员变量进行赋值。
+class Person{
+	static{
+		System.out.println("静态代码块执行！");
+	}
+	Person(){
+		System.out.println("构造方法执行！");
+	}
+}
+
+public class Test{
+	public static void main(String[] args){
+		Person one=new Person();
+		Person two=new Person();
+	}
+}
+
+
+
+4.抽象类  abstract
+当多个类存在相同的功能，但是功能的主体不同，这时可以把相同的功能定义进行向上抽取。
+
+抽象方法：就是加上abstract关键字，然后去掉大括号，直接分号结束。
+抽象类：抽象方法所在的类，必须是抽象类。需要在class前加abstract。
+
+如何使用抽象类和抽象方法：
+(1)不能直接用new创建抽象类对象。
+(2)必须用一个子类来继承抽象父类。
+(3)子类必须覆盖重写抽象父类当中的所有抽象方法。
+覆盖重写（实现）：子类去掉抽象方法的abstract关键字，然后补上方法体大括号。
+(4)创建子类对象进行使用。
+
+
+抽象类的特点：
+(1)抽象方法一定要在抽象类中，抽象方法没有方法主体。
+  如果有抽象方法，类一定是抽象类，子类一定要重写父类的抽象方法。
+  但抽象类中可以包含 非 抽象方法的方法。
+(2)抽象类和抽象方法必须要被abstract关键字修饰， abstract只能修饰类和方法。
+(3)抽象类是不能被用来创建对象，因为调用抽象方法没意义。
+(4)抽象类的中方法要被使用，必须由子类重写抽象类中的方法，然后创建子类对象来调用。
+(5)抽象类中可以定义非抽象的方法,有时我们需要此类不能被new关键字创建对象时，
+可以用abstract将此类变成抽象类，尽管里面可能没有抽象方法。
+(6)子类如果只重写一部分的抽象方法，那么该子类还是一个抽象类，仍然无法创建对象。
+如果抽象类的方法要被使用，子类必须重写抽象类中的所有方法。
+
+注意：抽象类和普通的类没有太大的不同,不同在于。
+(1)抽象类无法通过new关键字创建对象
+(2)抽象类里面可有抽象的方法
+
+abstract class Animal{
+	abstract void sing();
+	void sleep(){
+		System.out.println("zzz…");
+	}
+}
+class Cat extends Animal{
+	void sing(){
+		System.out.println("喵喵");
+	}
+}
+class Dog extends Animal{
+	void sing(){
+		System.out.println("汪汪");
+	}
+}
+public class Test{
+	public static void main(String[] args){
+		Animal t=new Cat();
+		t.sing();
+	}
+}
+
+
+5.接口 Interface
+生活中：接口是一种公共的规范标准。只要符合规范标准，就可以通用。
+例如电脑提供了USB接口，不仅可以用来传数据，还可以扩展出很多其他的设备，如充电器、夜读灯、小风扇、暖宝宝等。
+代码中：接口就是多个类的公共规范。它是一种引用数据类型，最重要的内容就是其中的抽象方法。
+public interface 接口名称{
+	//接口内容
+}
+
+接口：初步理解，接口是一个特殊的抽象类，当抽象类中全部是抽象方法时（早期版本），可以通过接口的形式来体现。
+class 用于定义类
+interface 用于定义接口
+
+接口内容：
+抽象方法（常量、默认方法、静态方法、私有方法（后面的版本才有））
+接口的使用步骤：
+(1)接口不能直接使用，必须要用一个实现类(理解为子类)来实现(理解为继承)该接口。
+public class 实现类名 implements 接口名{
+	…
+}
+(2)接口的实现类必须覆盖重写（实现）接口中的所有抽象方法。
+实现：去掉abstract关键字，加上方法体{ }。
+(3)创建实现类的对象，进行调用。
+注意：如果实现类没有完全覆盖重写接口中所有的抽象方法，那么这个实现类自己也必须是抽象类。
+
+在父类和子类的关系中可以看出，父类是子类的抽象类。
+换句话说，子类是在父类的基础上添加或者修改了一些属性或方法。
+而当父类非常抽象的时候，或者说当我们仅仅知道这个类的对象应该干什么，
+而具体怎么去做都还不清楚的时候，我们可以定义这样一个特殊类，
+它只有方法的定义，没有方法主体。
+如果一个类中的所有方法都没有方法主体，这个类我们叫做接口。
+
+接口里没有staic代码块，没有构造方法，不能创建对象。
+我们定义接口是给子类来扩展功能的，接口同样也是一种数据类型。
+接口中成员的格式:
+public static final String NAME="小李";//全局常量
+public abstract void show(); //抽象方法，没有{}，没写public abstract，也会自动加上
+
+注意：子类对接口中的所有抽象方法实现后，子类才能够实例化，否则子类还是一个抽象类。
+
+
+接口中如有静态方法，直接用   接口名.静态方法名( );    来调用，不需要new对象。
+接口中也允许定义默认方法 [public] default 返回值类型 方法名（）{ }
+如果默认方法中有重复代码，可以抽取出来，用private 定义成方法调用。
+接口中也可以在方法外定义常量，用public static final修饰
+public static final int NUM_CLASS=10;
+（1）一旦用final修饰，说明不可再赋值修改。
+（2）可以省略public static final,不写也照样是。
+（3）接口中的常量必须赋值，常量名全部大写。
+（4）使用：接口名.常量名
+
+interface Sleep{
+	public static final String TIME="晚上";
+	public abstract void show();
+}
+class Student implements Sleep{
+	String name="小李";
+	public void show(){
+		System.out.println(name+TIME+"在睡觉");
+	}
+}
+public class Test1{
+	public static void main(String[] args){
+		Student s=new Student();
+		s.show();	
+	}
+}
+
+
+java不支持多继承,因为存在安全隐患,当父类中定义了相同功能，功能内容不同时,子类不确定要运行哪一个。
+但是java保留了这种机制，并用另一种体现形式来完成>>多实现
+就是一个类可以实现多个接口。
+如果一个实现类所实现的多个接口当中，存在重复的抽象方法，那么只需要重写一次就可以了。
+如果实现类所实现的多个接口中存在重复的默认方法，那么实现类需要对冲突的默认方法覆盖重写。
+如果一个类的直接父类和接口当中的方法发生了冲突，优先用父类的方法。
+
+interface Sleep{
+	public abstract void sleep();
+}
+interface Game {
+	public abstract void computerGame();
+}
+class Student implements Sleep,Game{
+	public void sleep(){
+		System.out.println("在睡觉");
+	}
+	public void computerGame(){
+		System.out.println("在玩游戏");
+	}
+} 
+public class Test{
+	public static void main(String[] args){
+		Student s=new Student();
+		s.computerGame();	
+		s.sleep();
+	}
+}
+
+
+关系：
+类与类之间是单继承关系，直接父类只有一个。
+接口与类之间是实现关系，一个类可以实现多个接口。
+接口与接口之间是多继承关系，一个接口可以继承多个接口。
+
+public interface Jk1{
+	public abstract void method1();
+	public abstract void method();
+}
+public interface Jk2{
+	public abstract void method2();
+	public abstract void method();
+}
+public interface MyJk extends Jk1,Jk2{
+	public abstract void methodMy();  //这个子接口有4个抽象方法method1，method2，method，methodMy
+}
+public class ShiXianLei implements MyJk{
+//需要重写4个抽象方法
+}
+public class Test{
+	public static void main(String[] args){
+		ShiXianLei sx=new ShiXianLei();
+		sx.method();//
+	}
+}
+
+
+接口：提高了我们功能的扩展性，因为它降低事物与事物之间的耦合性(关系紧密程度)
+父类中定义的是多个类中共性的基本功能，接口中定义的是扩展功能。
+接口好处：可以多实现，也就是一个类可以实现多个接口。
+
+class Person{
+	String name;
+	int age;
+}
+interface Work{
+	public abstract void makemoney();
+}
+class Student extends Person implements Work{
+	public void makemoney(){
+		System.out.print("打工挣钱");
+	}	
+
+}
+public class Test{
+	public static void main(String[] args){
+		Student stu=new Student();
+		stu.makemoney();
+	}
+}
+
+
+
+6.多态 polymorphism
+
+多态：可以理解为事物存在的多种体现形态
+动物：猫、狗
+人： 男人、 女人
+员工：经理、销售
+
+1）多态的体现：父类引用指向子类对象，
+          父类名称  对象名=new  子类名称();
+          接口名称  对象名=new  实现类名();
+2）多态的前提
+（1）必须得类与类之间存在关系，可以是继承关系， 也可以是实现关系
+（2）必须得有方法重写 
+  (3)   必须要有父类或接口的引用指向一个子类的对象
+3）多态的好处：可以减少代码冗余，提高了程序的可扩展性
+4）多态的弊端：提高的程序可扩展性，只能用父类的引用，访问到父类中成员
+
+class Fu{
+	public void method(){
+		System.out.println("父类方法");
+	}
+
+	public void methodFu(){
+		System.out.println("父类特有的方法");
+	}
+}
+class Zi extends Fu{
+	public void method(){
+		System.out.println("子类方法");
+	}
+	public void methodZi(){
+		System.out.println("子类特有的方法");
+	}
+}
+
+public class Test1{
+	public static void main(String[] args){
+		Fu fu=new Zi();
+		fu.method();    //访问的是子类方法
+		fu.methodFu();  //访问的是父类特有方法
+		fu.methodZi();  //报错
+	}
+}
+
+左父右子的多态写法中，成员变量的访问：
+1）直接通过  对象名.成员变量名 访问，优先用父类，没有则向上找。
+2）间接通过  成员方法访问，看方法属于谁，优先用谁，没有则向上找。
+public class Fu{
+	int num=10;
+	public void method(){
+		System.out.println(num);
+	}
+}
+public class Zi extends Fu{
+	int num=100;
+	public void method(){
+		System.out.println(num);
+	}
+}
+
+public class Test{
+	public static void main(String[] args){
+		Fu fu=new Zi();
+		System.out.println(fu.num);
+		fu.method();  
+	}
+}
+
+多态中成员方法的访问：看new 的是谁，就访问谁，没有就向上找。
+访问规则：成员方法：编译看左边，运行看右边。
+               成员变量：编译看左边，运行还是看左边。
+
+class Animal{
+	void sing(){
+		System.out.println("唱歌");
+	}
+}
+class Dog extends Animal{
+	void sing(){
+		System.out.println("汪汪");
+	}
+}
+class Cat extends Animal{
+	void sing(){
+		System.out.println("喵喵");
+	}
+	void catchMouse(){
+		System.out.println("捕鼠");
+	}
+}
+public class Test{
+	public static void main(String[] args){
+		Animal c=new Cat();
+		function(c);
+		Animal d=new Dog();
+		function(d);
+	}
+	
+	public static void function(Animal c){  //多态
+		c.sing();	
+		if(c instanceof Cat){
+			Cat c1=(Cat)c;   //如要访问子类中的其他方法，需要向下转型	
+			c1.catchMouse();
+		}
+	}	
+	
+}
+
+
+案例1：
+
+class FK{
+	void bx(){
+		System.out.println("变形");
+	}
+}
+class FK_Tzx extends FK{//T字型
+	void bx(){
+		System.out.println("T字型在变形");
+	}
+}
+class FK_Lzx extends FK {//L字型
+	void bx(){
+		System.out.println("L字型在变形");
+	}
+}
+class FK_Zzx extends FK{//Z字形
+	void bx(){
+		System.out.println("Z字型在变形");
+	}
+}
+class FK_Izx extends FK{//I字形
+	void bx(){
+		System.out.println("I字型在变形");
+	}
+}
+class FK_Ozx extends FK{
+	void bx(){
+		System.out.println("田字型在变形");
+	}
+}
+
+
+import java.util.Random;
+class Test{
+	public static void main(String[] args){
+		Random r=new Random();
+		int a=r.nextInt(5);
+		FK fk=null;
+		switch(a){
+		case 0:
+//			FK_Tzx tzx=new FK_Tzx();
+//			tzx.bx();		
+			fk=new FK_Tzx();
+			break;
+		case 1:
+			fk=new FK_Lzx();
+			break;
+		case 2:
+			fk=new FK_Zzx();
+			break;
+		case 3:
+			fk=new FK_Izx();
+			break;
+		case 4:
+			fk=new FK_Ozx();
+			break;
+		}
+		fk.bx();
+	}
+}
+
+
+案例2:
+描述笔记本类，实现笔记本使用USB设备（USB鼠标，USB键盘等）
+USB接口：包含打开设备、关闭设备功能
+笔记本类：包含开机、关机、使用USB设备功能
+鼠标类：要实现USB接口，并具备点击的方法
+键盘类：要实现USB接口，具备敲击的方法
+
+public interface USB{
+	public abstract void on();//打开设备
+	public abstract void off();//关闭设备
+}
+
+public class Computer{
+	public void powerOn(){
+		System.out.println("笔记本电脑开机");
+	}
+	public void powerOff(){
+		System.out.println("笔记本电脑关机");
+	}
+	public void useDevice(USB usb){//使用接口
+		usb.open();   //打开设备
+		if(usb instanceof Mouse) {
+			Mouse mouse=(Mouse)usb;
+			mouse.click();
+		}else if(usb instanceof Keyboard) {
+			Keyboard key=(Keyboard)usb;
+			key.type();
+		}
+		usb.close();   //关闭设备
+	}
+}
+
+public class Mouse implements USB{//实现接口
+	public void on(){
+		System.out.println("打开鼠标");
+	}
+	public void off(){
+		System.out.println("关闭鼠标");
+	}
+	public void click(){
+		System.out.println("鼠标点击");
+	}
+}
+public class Keyboard implements USB{//实现接口
+	public void on(){
+		System.out.println("打开键盘");
+	}
+	public void off(){
+		System.out.println("关闭键盘");
+	}
+	public void type(){
+		System.out.println("键盘敲击");
+	}
+}
+
+class Test{
+	public static void main(String[] args){
+		Computer computer=new Computer();
+		computer.powerOn();
+//	    1.第一种写法
+//		USB usb=new Mouse();
+//		computer.useDevice(usb);
+//	    2.第二种写法	
+//		Mouse mouse=new Mouse();
+//		computer.useDevice(mouse);
+//	    3.第三种写法		
+		computer.useDevice(new Mouse());
+		
+		computer.useDevice(new Keyboard());
+		
+		computer.powerOff();
+}
+
+
+多态，一个事物或一个操作具有多种形态，体现在：
+（1）方法的重载
+（2）方法的重写
+（3）在继承和实现关系中，在不同子类调用多个同样行为后会出现大量的代码，这时用父类的引用变量进行统一调用。
+public class Main{
+	public static void main(String[] args) {
+		
+			Dog dog = new Dog();		
+			Cat cat = new Cat();
+			
+			method(dog);
+			method(cat);
+	}
+	public static void method(Animal a) {
+		a.eat();
+	}
+}
+
+OOP三大特性:封装，继承，多态
+总结：
+1.封装是把过程和数据用类封装起来，对数据的访问只能通过已定义的界面，把实现的细节隐藏起来，从而使得代码模块化。
+2.继承可以扩展已存在的代码模块，而目的就是为了代码重用。
+3.多态使得子类的功能可以被父类的方法或引用变量所调用，实现向后兼容，可以提高可扩充性和可维护性。
+  降低了系统耦合度，模块模块之间尽量使用模块接口访问，而不是随意引用其他模块的成员变量。
+
+
+习题：
+
+1.在停车场收费系统中，收费者会根据车型的不同收取不同的停车费，根据停车时间计算收费。
+其中：客车：15/小时  货车：12/小时  （ 轿车：8/小时）
+
+2.cellphone继承自phone(只有call抽象方法)，后来又出现了听音乐mp3、导航map、钱包wallet支付功能，
+把他们定义成接口，cellphone实现这些接口，主程序中用cellphone去调用这些功能。
+
+3.主人类Master养了猫、狗，需要喂养，后又领养了鸟，如何实现喂养功能？
+猫吃完了开始睡觉，如何调用猫类的睡觉方法？
+Animal父类，有抽象方法eat，子类去重写eat，Cat还有自己的特有方法sleep“吃完了开始睡觉”，
+在Master类主程序中调用。
+
+4.按如下要求编写Java程序：
+（1）编写一个接口：OneToN，只含有一个方法int dispose(int n)。
+（2）编写一个非抽象类Sum来实现接口OneToN，实现int dispose (int n)接口方法时，要求计算1 + 2 + … + n。
+（3）编写另一个非抽象类Pro来实现接口OneToN，实现int dispose (int n)接口方法时，要求计算1 * 2 * … * n。
+（4）编写测试类Test，在main方法中使用接口回调技术来测试实现接口的类。
+
+5.学习下面的程序，把租车序号修改正确。
+控制台输出：
+欢迎使用租车系统
+你是否要租车:1是 0否
+1
+您可租车的类型及其价目表
+序号：1 汽车名称:奥迪A4 租金500/天 容量：最多载人4人
+序号：2 汽车名称:马自达6 租金400/天 容量：最多载人4人
+序号：3 汽车名称:皮卡雪6 租金450/天 容量：最多载人4人，最多载货2吨
+序号：4 汽车名称:金龙 租金800/天 容量：最多载人20人
+序号：5 汽车名称:松花江 租金400/天 容量：最多载货4吨
+序号：6 汽车名称:依维柯 租金1000/天 容量：最多载货20吨
+请输入您要租汽车的数量：
+4
+请输入您要租车的序号和天数
+1 3
+2 3
+3 3
+4 3
+您的账单：
+马自达6  3天
+皮卡雪6  3天
+金龙  3天
+松花江  3天
+总价格：6150元
+
+
+1，父类
+package rentcar;
+
+//所有车的父类
+public class Car {
+ private int num;//编号
+  private String name;
+  private int price;
+ public Car(int num, String name, int price) {
+  super();
+  this.num = num;
+  this.name = name;
+  this.price = price;
+ }
+ public Car() {}
+ public int getNum() {
+  return num;
+ }
+ public void setNum(int num) {
+  this.num = num;
+ }
+ public String getName() {
+  return name;
+ }
+ public void setName(String name) {
+  this.name = name;
+ }
+ public int getPrice() {
+  return price;
+ }
+ public void setPrice(int price) {
+  this.price = price;
+ }
+ 
+ public String toString() {
+  return "序号：" + num +" "+ " 汽车名称:" + name+" "+ "租金" + price +"/天"+" ";
+ }
+ 
+}
+2，子类1
+
+package rentcar;
+
+//只用于载人的车
+public class Manned extends Car{
+	private int personNum;
+	public Manned(int num, String name, int price, int personNum) { 
+		super(num,name,price); 
+		this.personNum = personNum; 
+	} 
+	public Manned() {}
+	public int getPersonNum() {
+		return personNum;
+	}
+	public void setPersonNum(int personNum) {
+		this.personNum = personNum;
+	}
+	public String toString() {
+		return super.toString()+"容量："+"最多载人"+personNum+"人"+" ";
+	}
+
+}
+3，子类2
+package rentcar;
+
+//只用于载货的车
+public class Goods extends Car{
+	private int weight;
+	public Goods(int num, String name, int price, int weight) { 
+		super(num,name,price); 
+		this.weight = weight; 
+	} 
+	public Goods() {}
+	public int getWeight() {
+		return weight;
+	}
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+	public String toString() {
+		return super.toString()+"容量："+"最多载货"+weight+"吨"+" ";
+	} 
+}
+
+4，子类3
+Package rentcar;
+
+//既可以载人也可以载货
+public class Pcar extends Car{
+	private int personNum;
+	private int weight;
+	public Pcar(int num, String name, int price, int personNum,int weight) { 
+		super(num,name,price);
+		this.personNum=personNum;
+		this.weight = weight; 
+	} 
+	public Pcar(){}
+	public int getPersonNum() {
+		return personNum;
+	}
+	public void setPersonNum(int personNum) {
+		this.personNum = personNum;
+	}
+	public int getWeight() {
+		return weight;
+	}
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+	public String toString() {
+		return super.toString()+"容量："+"最多载人"+personNum+"人，"+"最多载货"+weight+"吨";
+	} 
+}
+
+5，主方法
+
+package rentcar;
+import java.util.*;
+public class Test {
+	public static void main(String[] args) {
+		Car c1=new Manned(1,"奥迪A4",500,4);
+		Car c2=new Manned(2,"马自达6",400,4);
+		Car c3=new Pcar(3,"皮卡雪6",450,4,2);
+		Car c4=new Manned(4,"金龙",800,20);
+		Car c5=new Goods(5,"松花江",400,4);
+		Car c6=new Goods(6,"依维柯",1000,20);
+		Car[] cars = {c1,c2,c3,c4,c5,c6};
+		Scanner in=new Scanner(System.in);
+		System.out.println("欢迎使用租车系统");
+		System.out.println("你是否要租车:1是 0否");
+		int a=in.nextInt();
+		if(a==1)
+		{
+			System.out.println("您可租车的类型及其价目表");
+			for(int i=0;i<cars.length;i++)
+			{
+				System.out.println(cars[i].toString());
+			}
+			System.out.println("请输入您要租汽车的数量：");
+			int b=in.nextInt();
+
+			System.out.println("请输入您要租车的序号和天数");
+			Car[] cars2=new Car[b];
+			int[] day=new int[b];
+			int s=0;
+			for(int i=0;i<b;i++)
+			{ 
+				int c=in.nextInt();
+				int d=in.nextInt();
+				cars2[i]=cars[c];
+				day[i]=d;
+				s=s+cars[c].getPrice()*d;
+			}
+			System.out.println("您的账单：");
+			for(int i=0;i<cars2.length;i++)
+			{
+				System.out.println(cars2[i].getName()+"  "+day[i]+"天");
+
+			}
+			System.out.println("总价格："+s+"元");
+
+		}
+		else
+			System.out.println("再见");
+	}
+
+}
+
+
